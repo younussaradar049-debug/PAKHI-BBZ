@@ -276,4 +276,4 @@ module.exports = function(loginData, options, callback) {
 
         return callback(null, api);
     });
-} catch(e) { console.log(e); }
+} catch(e) { console.log(e); };
