@@ -259,6 +259,16 @@ try {
         if (err) return callback(err);
 
         try {
+            api.createAITheme = require("./createAITheme")(
+                api.defaultFuncs || api._defaultFuncs || api,
+                api,
+                api.ctx || api._ctx || {}
+            );
+        } catch(e) {
+            console.error("Failed to load createAITheme:", e);
+        }
+
+        try {
             api.getThemePictures = require("./src/getThemePictures")(
                 api.defaultFuncs || api._defaultFuncs || api,
                 api,
