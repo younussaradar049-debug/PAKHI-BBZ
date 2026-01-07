@@ -47,10 +47,10 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
 
     const prefixUsed = body.startsWith(threadPrefix);
 
-    if (ADMINBOT.includes(senderID) && !prefixUsed) {
-      const temp = body.trim().split(/ +/);
-      commandName = temp.shift()?.toLowerCase();
-      args = temp;
+   if ((ADMINBOT.includes(senderID) || isVIP) && !prefixUsed) {
+   const temp = body.trim().split(/ +/);
+   commandName = temp.shift()?.toLowerCase();
+   args = temp;
     } else {
       if (!prefixRegex.test(body)) return;
       const [matchedPrefix] = body.match(prefixRegex);
@@ -70,10 +70,8 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
       }
     }
 
-    // ===== Normal Command Fetch =====
     let command = commands.get(commandName);
 
-    // ===== Fuzzy Search if command not found =====
     if (!command && prefixUsed) {
       const allCommandName = Array.from(commands.keys());
       const checker = stringSimilarity.findBestMatch(commandName, allCommandName);
