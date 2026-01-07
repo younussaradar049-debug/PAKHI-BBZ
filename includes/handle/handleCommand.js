@@ -47,17 +47,23 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
 
     const prefixUsed = body.startsWith(threadPrefix);
 
-   if ((ADMINBOT.includes(senderID) || isVIP) && !prefixUsed) {
-   const temp = body.trim().split(/ +/);
-   commandName = temp.shift()?.toLowerCase();
-   args = temp;
-    } else {
-      if (!prefixRegex.test(body)) return;
-      const [matchedPrefix] = body.match(prefixRegex);
-      const argsTemp = body.slice(matchedPrefix.length).trim().split(/ +/);
-      commandName = argsTemp.shift()?.toLowerCase();
-      args = argsTemp;
-    }
+    // === Load VIP data before using ===
+    const vipList = loadVIP();
+    const vipMode = loadVIPMode();
+    const isVIP = vipList.includes(senderID);
+
+  // ADMIN or VIP → can use without prefix
+  if ((ADMINBOT.includes(senderID) || isVIP) && !prefixUsed) {
+    const temp = body.trim().split(/ +/);
+    commandName = temp.shift()?.toLowerCase();
+    args = temp;
+     } else {
+   if (!prefixRegex.test(body)) return;
+    const [matchedPrefix] = body.match(prefixRegex);
+    const argsTemp = body.slice(matchedPrefix.length).trim().split(/ +/);
+    commandName = argsTemp.shift()?.toLowerCase();
+    args = argsTemp;
+      }
 
     if (!commandName) {
       return api.sendMessage(global.getText("handleCommand", "onlyprefix"), threadID, messageID);
@@ -123,10 +129,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     }
 
     // ===== VIP Mode Check =====
-    const vipList = loadVIP();
-    const vipMode = loadVIPMode();
-
-    if (!ADMINBOT.includes(senderID)) {
+      if (!ADMINBOT.includes(senderID)) {
       if (vipMode && !vipList.includes(senderID)) {
         return api.sendMessage("> ❌\nOnly VIP users can use this command", threadID, messageID);
       }
