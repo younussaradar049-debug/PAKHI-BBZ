@@ -2,17 +2,13 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     const logger = require("../../utils/log.js");
     const moment = require("moment");
 
-    // helper: normalize name
-    const normalize = s => s?.toLowerCase().replace(/[^a-z0-9]/g, "");
-
     return function ({ event }) {
         const timeStart = Date.now();
         const time = moment.tz("Asia/Dhaka").format("HH:mm:ss L");
         const { userBanned, threadBanned } = global.data;
         const { events } = global.client;
         const { allowInbox, DeveloperMode } = global.config;
-
-        let { senderID, threadID, body } = event;
+        let { senderID, threadID } = event;
         senderID = String(senderID);
         threadID = String(threadID);
 
@@ -20,25 +16,23 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
             userBanned.has(senderID) ||
             threadBanned.has(threadID) ||
             (allowInbox === false && senderID === threadID)
-        ) return;
+        ) {
+            return;
+        }
 
-        /* ================== MENTION LOGIC START ================== */
+        /* ===== ONLY @user MENTION LOGIC ===== */
         event.mentionedIDs = [];
 
-        // 1️⃣ official mention
+        // official fb mention
         if (event.mentions && Object.keys(event.mentions).length > 0) {
             event.mentionedIDs = Object.keys(event.mentions);
         }
-
-        // 2️⃣ reply mention
-        else if (event.type === "message_reply" && event.messageReply?.senderID) {
-            event.mentionedIDs = [String(event.messageReply.senderID)];
-        }
-
-        // 3️⃣ fallback @name resolver
-        else if (body && body.includes("@")) {
+        // fallback @name resolver
+        else if (event.body && event.body.includes("@")) {
             try {
-                const tagMatches = [...body.matchAll(/@(.+?)(?=\s|$)/g)];
+                const normalize = s => s?.toLowerCase().replace(/[^a-z0-9]/g, "");
+                const tagMatches = [...event.body.matchAll(/@(.+?)(?=\s|$)/g)];
+
                 if (tagMatches.length > 0) {
                     const threadInfo = await api.getThreadInfo(threadID);
 
@@ -57,11 +51,9 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                         }
                     }
                 }
-            } catch (e) {
-                // silently ignore mention error
-            }
+            } catch (_) {}
         }
-        /* ================== MENTION LOGIC END ================== */
+        /* ===== END MENTION LOGIC ===== */
 
         for (const [key, value] of events.entries()) {
             if (value.config.eventType.includes(event.logMessageType)) {
@@ -75,7 +67,6 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                         Threads,
                         Currencies
                     };
-
                     eventRun.run(Obj);
 
                     if (DeveloperMode === true) {
