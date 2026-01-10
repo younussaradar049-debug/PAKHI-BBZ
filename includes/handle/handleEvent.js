@@ -1,10 +1,10 @@
 module.exports = function ({ api, models, Users, Threads, Currencies }) {
     const logger = require("../../utils/log.js");
-    const moment = require("moment");
+    const moment = require("moment-timezone"); // timezone support
 
-    return function ({ event }) {
+    return async function ({ event }) { // async লাগবে @mention logic এর জন্য
         const timeStart = Date.now();
-        const time = moment.tz("Asia/Dhaka").format("HH:mm:ss L");
+        const time = moment.tz("Asia/Dhaka").format("HH:mm:ss L"); // Asia/Dhaka timezone
         const { userBanned, threadBanned } = global.data;
         const { events } = global.client;
         const { allowInbox, DeveloperMode } = global.config;
@@ -12,11 +12,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         senderID = String(senderID);
         threadID = String(threadID);
 
-        if (
-            userBanned.has(senderID) ||
-            threadBanned.has(threadID) ||
-            (allowInbox === false && senderID === threadID)
-        ) {
+        if (userBanned.has(senderID) || threadBanned.has(threadID) || (allowInbox === false && senderID === threadID)) {
             return;
         }
 
@@ -70,28 +66,10 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                     eventRun.run(Obj);
 
                     if (DeveloperMode === true) {
-                        logger(
-                            global.getText(
-                                'handleEvent',
-                                'executeEvent',
-                                time,
-                                eventRun.config.name,
-                                threadID,
-                                Date.now() - timeStart
-                            ),
-                            '[ Sự kiện ]'
-                        );
+                        logger(global.getText('handleEvent', 'executeEvent', time, eventRun.config.name, threadID, Date.now() - timeStart), '[ Sự kiện ]');
                     }
                 } catch (error) {
-                    logger(
-                        global.getText(
-                            'handleEvent',
-                            'eventError',
-                            eventRun.config.name,
-                            JSON.stringify(error)
-                        ),
-                        "error"
-                    );
+                    logger(global.getText('handleEvent', 'eventError', eventRun.config.name, JSON.stringify(error)), "error");
                 }
             }
         }
