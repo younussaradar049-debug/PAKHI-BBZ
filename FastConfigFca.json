@@ -30,7 +30,7 @@
 	"AntiGetInfo": {
 		"Database_Type": "default",
 		"AntiGetThreadInfo": true,
-		"AntiGetUserInfo": true
+		"AntiGetUserInfo": false
 	},
 	"Stable_Version": {
 		"Accept": false,
