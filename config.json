@@ -15,15 +15,16 @@
     "ACCESSTOKEN": "",
     "FACEBOOK_ADMIN": "rxabdullah007",
     "ZALO_ADMIN": "",
-    "ADMIN_NAME": "rX",
-    "BOTNAME": "Sııƞƞeɽ v3 倫ッ",
-    "PREFIX": "!",
+    "ADMIN_NAME": "Misty",
+    "BOTNAME": "𝐏𝐚𝐤𝐡𝐢 𝐁𝐛𝐳❁",
+    "PREFIX": ".",
     "ADMINBOT": [
-        "100068565380737",
-        "61579782879961"
+        "61564643127325",
+        "61587127028066"
     ],
     "NDH": [
-        "100068565380737"
+        "61564643127325",
+        "61587127028066"
     ],
     "DATABASE": {
         "sqlite": {
