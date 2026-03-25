@@ -31,7 +31,7 @@ module.exports.handleEvent = async function ({ api, event }) {
     ];
 
     let loading = await api.sendMessage(
-      `🔄 Fetching Prefix Info...\n\n${progress[0]}`,
+      `\n\n${progress[0]}`,
       threadID
     );
 
