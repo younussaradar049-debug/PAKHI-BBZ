@@ -38,7 +38,7 @@ module.exports.handleEvent = async function ({ api, event }) {
     for (let i = 1; i < progress.length; i++) {
       await new Promise(r => setTimeout(r, 250));
       await api.editMessage(
-        `🔄 Fetching Prefix Info...\n\n${progress[i]}`,
+        `\n\n${progress[i]}`,
         loading.messageID
       );
     }
