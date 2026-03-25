@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="####"><img src="http://readme-typing-svg.herokuapp.com?color=cyan&center=true&vCenter=true&multiline=false&lines=`✦ 𝗣𝗔𝗞𝗛𝗜 𝗕𝗔𝗕𝗬 ✦`" alt="">
+  <a href="####"><img src="http://readme-typing-svg.herokuapp.com?color=cyan&center=true&vCenter=true&multiline=false&lines=`✦ 𝗣𝗔𝗞𝗛𝗜  𝗕𝗔𝗕𝗬 ✦`" alt="">
 </p>
 
 <br />
@@ -60,7 +60,7 @@ This project is licensed under the GNU General Public License v3.0 or later - se
 ### 1. Repository Clone Karein
 
 ```bash
-https://github.com/hridoyhossen48360/TORU-CHAN-.git
+https://github.com/hridoyhossen48360/PAKHI-BBZ.git
 ```
 
 ### 2. Dependencies Installed
@@ -144,7 +144,7 @@ info
 
 ## ✨ OWNAR PHOTO
 
-![Preview](https://i.imgur.com/oEh5VEx.jpeg)
+![Preview](https://imgur.com/a/AknlhMY)
 
 ---
 
