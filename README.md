@@ -1,14 +1,14 @@
 <p align="center">
-  <a href="####"><img src="http://readme-typing-svg.herokuapp.com?color=cyan&center=true&vCenter=true&multiline=false&lines=`❀ 𝗣𝗔𝗞𝗛𝗜 𝗕𝗕𝗭 ❀ `" alt="">
+  <a href="####"><img src="http://readme-typing-svg.herokuapp.com?color=cyan&center=true&vCenter=true&multiline=false&lines=`✦ 𝗣𝗔𝗞𝗛𝗜 𝗕𝗔𝗕𝗬 ✦`" alt="">
 </p>
 
 <br />
 <p align="center">
     <a href="https://github.com/rxabdullah007/Maria-v3">
-        <img src="https://imgur.com/a/AknlhMY" alt="Logo">
+        <img src="https://i.imgur.com/oEh5VEx.jpeg" alt="Logo">
     </a>
 
-<h3 align="center">✦ 𝗞𝗔𝗞𝗔𝗦𝗛𝗜 𝗛𝗔𝗧𝗔𝗞𝗘 ✦</h3>
+<h3 align="center">✦ 𝐌𝐈𝐒𝐓𝐘 𝐁𝐁𝐙 ✦</h3>
 
 <p align="center">
     A simple Facebook Messenger Bot made by me (Kakashi).
