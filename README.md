@@ -5,7 +5,7 @@
 <br />
 <p align="center">
     <a href="https://github.com/rxabdullah007/Maria-v3">
-        <img src="https://i.imgur.com/oEh5VEx.jpeg" alt="Logo">
+        <img src="https://i.ibb.co/hvYXKkx/image0.jpg" alt="Logo">
     </a>
 
 <h3 align="center">✦ 𝐌𝐈𝐒𝐓𝐘 𝐁𝐁𝐙 ✦</h3>
