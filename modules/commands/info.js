@@ -25,26 +25,28 @@ module.exports.run = async function ({ api, event, args, Users, Threads }) {
  const prefix = threadSetting.hasOwnProperty("PREFIX") ? threadSetting.PREFIX : config.PREFIX;
 
  // 🔥 Loading Animation Start
- const frames = [
-  "⏳ Loading Info...\n[■□□□□□□□□□] 10%",
-  "⏳ Loading Info...\n[■■■□□□□□□□] 30%",
-  "⏳ Loading Info...\n[■■■■■□□□□□] 50%",
-  "⏳ Loading Info...\n[■■■■■■■□□□] 70%",
-  "⏳ Loading Info...\n[■■■■■■■■■□] 90%",
-  "⏳ Loading Info...\n[■■■■■■■■■■] 100%"
- ];
+ const progress = [
+        "[■□□□□□□□□□] 10%",
+        "[■■■□□□□□□□] 30%",
+        "[■■■■■□□□□□] 50%",
+        "[■■■■■■■□□□] 70%",
+        "[■■■■■■■■■□] 90%",
+        "[■■■■■■■■■■] 100%"
+    ];
 
- let loadingMsg = await api.sendMessage(frames[0], threadID);
+    let loading = await api.sendMessage(
+      `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[0]}`,
+      threadID
+    );
 
- for (let i = 1; i < frames.length; i++) {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  try { await api.unsendMessage(loadingMsg.messageID); } catch(e) {}
-  loadingMsg = await api.sendMessage(frames[i], threadID);
- }
-
- await new Promise(resolve => setTimeout(resolve, 500));
- try { await api.unsendMessage(loadingMsg.messageID); } catch(e) {}
- // 🔥 Loading Animation End
+    for (let i = 1; i < progress.length; i++) {
+      await new Promise(r => setTimeout(r, 250));
+      await api.editMessage(
+        `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
+        loading.messageID
+      );
+    }
+ 
 
  const uptime = process.uptime();
  const hours = Math.floor(uptime / 3600);
