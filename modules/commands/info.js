@@ -1,56 +1,61 @@
-const fs = require("fs");
-const path = require("path");
-const axios = require("axios");
-const moment = require("moment-timezone");
-
 module.exports.config = {
-  name: "info",
-  version: "1.0.3",
-  hasPermssion: 0,
-  credits: "rX Abdullah",
-  description: "Admin.",
-  commandCategory: "Admin",
-  cooldowns: 1
+ name: "info",
+ version: "1.0.0",
+ hasPermssion: 0,
+ credits: "HRIDOY",
+ description: "Bot information command",
+ commandCategory: "Admin",
+ hide: true,
+ usages: "",
+ cooldowns: 5,
 };
 
-module.exports.run = async function ({ api, event }) {
+module.exports.run = async function ({ api, event, args, Users, Threads }) {
+ const { threadID } = event;
+ const request = global.nodemodule["request"];
+ const fs = global.nodemodule["fs-extra"];
+ const moment = require("moment-timezone");
 
-  // 🔥 Smooth Loading (same msg feel)
-  const frames = [
-    "Loading Info...\n[■□□□□□□□□□] 10%",
-    "Loading Info...\n[■■■□□□□□□□] 30%",
-    "Loading Info...\n[■■■■■□□□□□] 50%",
-    "Loading Info...\n[■■■■■■■□□□] 70%",
-    "Loading Info...\n[■■■■■■■■■□] 90%",
-    "Loading Info...\n[■■■■■■■■■■] 100%"
-  ];
+ const { configPath } = global.client;
+ delete require.cache[require.resolve(configPath)];
+ const config = require(configPath);
 
-  let msg = await api.sendMessage(frames[0], event.threadID);
+ const { commands } = global.client;
+ const threadSetting = (await Threads.getData(String(threadID))).data || {};
+ const prefix = threadSetting.hasOwnProperty("PREFIX") ? threadSetting.PREFIX : config.PREFIX;
 
-  for (let i = 1; i < frames.length; i++) {
-    await new Promise(r => setTimeout(r, 600));
+ // 🔥 Loading Animation Start
+ const frames = [
+  "⏳ Loading Info...\n[■□□□□□□□□□] 10%",
+  "⏳ Loading Info...\n[■■■□□□□□□□] 30%",
+  "⏳ Loading Info...\n[■■■■■□□□□□] 50%",
+  "⏳ Loading Info...\n[■■■■■■■□□□] 70%",
+  "⏳ Loading Info...\n[■■■■■■■■■□] 90%",
+  "⏳ Loading Info...\n[■■■■■■■■■■] 100%"
+ ];
 
-    try {
-      await api.unsendMessage(msg.messageID);
-    } catch(e) {}
+ let loadingMsg = await api.sendMessage(frames[0], threadID);
 
-    msg = await api.sendMessage(frames[i], event.threadID);
-  }
+ for (let i = 1; i < frames.length; i++) {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  try { await api.unsendMessage(loadingMsg.messageID); } catch(e) {}
+  loadingMsg = await api.sendMessage(frames[i], threadID);
+ }
 
-  await new Promise(r => setTimeout(r, 500));
-  try {
-    await api.unsendMessage(msg.messageID);
-  } catch(e) {}
+ await new Promise(resolve => setTimeout(resolve, 500));
+ try { await api.unsendMessage(loadingMsg.messageID); } catch(e) {}
+ // 🔥 Loading Animation End
 
-  // 🔥 Time
-  const uptime = process.uptime();
-  const h = Math.floor(uptime / 3600);
-  const m = Math.floor((uptime % 3600) / 60);
-  const s = Math.floor(uptime % 60);
+ const uptime = process.uptime();
+ const hours = Math.floor(uptime / 3600);
+ const minutes = Math.floor((uptime % 3600) / 60);
+ const seconds = Math.floor(uptime % 60);
 
-  const timeNow = moment.tz("Asia/Dhaka").format("DD/MM/YYYY HH:mm:ss");
+ const totalUsers = global.data.allUserID.length;
+ const totalThreads = global.data.allThreadID.length;
 
-  const text = `╔════ INFO ════╗
+ const msg = `
+╔════ INFO ════╗
 
 Name: Misty Bbz
 Age: 18
@@ -62,41 +67,23 @@ https://m.me/61564643127325
 Time: ${timeNow}
 Uptime: ${h}h ${m}m ${s}s
 
-╚══════════════╝`;
+╚══════════════╝
+`;
 
-  // 🔥 Image Download FIX
-  const dir = path.join(__dirname, "cache");
-  const file = path.join(dir, "img.jpg");
+ const imgLinks = [
+ "https://i.imgur.com/5HD6Alr.jpeg"
+ ];
 
-  try {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+ const imgLink = imgLinks[Math.floor(Math.random() * imgLinks.length)];
 
-    const response = await axios({
-      url: "https://i.imgur.com/5HD6Alr.jpeg",
-      method: "GET",
-      responseType: "arraybuffer"
-    });
+ const callback = () => {
+ api.sendMessage({
+ body: msg,
+ attachment: fs.createReadStream(__dirname + "/cache/info.jpg")
+ }, threadID, () => fs.unlinkSync(__dirname + "/cache/info.jpg"));
+ };
 
-    fs.writeFileSync(file, response.data);
-
-    await api.sendMessage(
-      {
-        body: text,
-        attachment: fs.createReadStream(file)
-      },
-      event.threadID,
-      (err, info) => {
-        if (!err) {
-          setTimeout(() => {
-            api.unsendMessage(info.messageID);
-          }, 10000);
-        }
-        fs.unlinkSync(file);
-      }
-    );
-
-  } catch (e) {
-    console.error(e);
-    api.sendMessage("❌ Image send failed!", event.threadID);
-  }
+ return request(encodeURI(imgLink))
+ .pipe(fs.createWriteStream(__dirname + "/cache/info.jpg"))
+ .on("close", callback);
 };
