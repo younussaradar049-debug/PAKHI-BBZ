@@ -5,7 +5,7 @@ module.exports.config = {
   name: "help",
   version: "5.0.0",
   hasPermssion: 0,
-  credits: "rX + Modified by KakashiXtoru",
+  credits: "Hridoy",
   usePrefix: true,
   description: "Advanced Custom Category Help Menu",
   commandCategory: "System",
@@ -20,7 +20,6 @@ module.exports.run = async function ({ api, event, args }) {
     // ⚙️ CUSTOM CATEGORY CONTROL
     // ==============================
 
-    // 👉 Only these categories will show (leave empty = show all)
     const VISIBLE_CATEGORIES = [
       "AI",
       "Game",
@@ -29,16 +28,15 @@ module.exports.run = async function ({ api, event, args }) {
       "Image",
       "Utility",
       "Tag Fun",
-      "img"
+      "img",
+      "Admin",
+      "System",
+      "Picture"
     ];
 
-    // 👉 These categories will NEVER show
     const HIDDEN_CATEGORIES = [
-      "Admin",
       "nsfw",
       "noprefix",
-      "System",
-      "Picture",
       "video Convert Audio",
     ];
 
@@ -47,12 +45,12 @@ module.exports.run = async function ({ api, event, args }) {
     // ==============================
 
     const frames = [
-        "[■□□□□□□□□□] 10%",
-        "[■■■□□□□□□□] 30%",
-        "[■■■■■□□□□□] 50%",
-        "[■■■■■■■□□□] 70%",
-        "[■■■■■■■■■□] 90%",
-        "[■■■■■■■■■■] 100%"
+      "[■□□□□□□□□□] 10%",
+      "[■■■□□□□□□□] 30%",
+      "[■■■■■□□□□□] 50%",
+      "[■■■■■■■□□□] 70%",
+      "[■■■■■■■■■□] 90%",
+      "[■■■■■■■■■■] 100%"
     ];
 
     let loading = await api.sendMessage(
@@ -92,6 +90,7 @@ module.exports.run = async function ({ api, event, args }) {
           usages: cmd.config.usages || "",
           cooldowns: cmd.config.cooldowns || 0,
         });
+
       } catch {}
     }
 
@@ -99,7 +98,7 @@ module.exports.run = async function ({ api, event, args }) {
     // 📘 COMMAND DETAIL MODE
     // ==============================
 
-    if (args[0] && isNaN(args[0])) {
+    if (args[0] && isNaN(args[0]) && args[0].toLowerCase() !== "all") {
 
       const find = args[0].toLowerCase();
 
@@ -130,7 +129,25 @@ module.exports.run = async function ({ api, event, args }) {
       msg += `📘 Description: ${cmd.description}\n`;
       msg += `📗 Usage: ${global.config.PREFIX}${cmd.name} ${cmd.usages}`;
 
-      return api.sendMessage(msg, event.threadID, (e, i) => {
+      // ==============================
+      // 🎞 RANDOM GIF ATTACHMENT
+      // ==============================
+      let attachment = null;
+      const cache = path.join(__dirname, "noprefix");
+
+      if (fs.existsSync(cache)) {
+        const allow = [".gif", ".mp4", ".png", ".jpg", ".webp"];
+        const list = fs.readdirSync(cache).filter(f =>
+          allow.includes(path.extname(f).toLowerCase())
+        );
+
+        if (list.length)
+          attachment = fs.createReadStream(
+            path.join(cache, list[Math.floor(Math.random() * list.length)])
+          );
+      }
+
+      return api.sendMessage({ body: msg, attachment }, event.threadID, (e, i) => {
         if (!e) setTimeout(() => api.unsendMessage(i.messageID), 20000);
       }, event.messageID);
     }
@@ -140,18 +157,16 @@ module.exports.run = async function ({ api, event, args }) {
     // ==============================
 
     const categories = {};
+    const showAll = args[0] && args[0].toLowerCase() === "all";
 
     for (let cmd of commands) {
 
-      // ❌ Skip hidden
-      if (HIDDEN_CATEGORIES.includes(cmd.category)) continue;
+      if (!showAll) {
+        if (HIDDEN_CATEGORIES.includes(cmd.category)) continue;
+        if (VISIBLE_CATEGORIES.length && !VISIBLE_CATEGORIES.includes(cmd.category)) continue;
+      }
 
-      // ✅ If visible list exists → only allow those
-      if (VISIBLE_CATEGORIES.length &&
-          !VISIBLE_CATEGORIES.includes(cmd.category)) continue;
-
-      if (!categories[cmd.category])
-        categories[cmd.category] = [];
+      if (!categories[cmd.category]) categories[cmd.category] = [];
 
       categories[cmd.category].push(cmd.name);
     }
@@ -160,7 +175,7 @@ module.exports.run = async function ({ api, event, args }) {
     // 📜 BUILD HELP MESSAGE
     // ==============================
 
-    let msg = `╭──❏ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐇𝐞𝐥𝐩 𝐌𝐞𝐧𝐮 ❏──╮\n`;
+    let msg = `╭─❏𝐂𝐮𝐬𝐭𝐨𝐦 𝐇𝐞𝐥𝐩 𝐌𝐞𝐧𝐮❏─╮\n`;
     msg += `│ ✧ Total Commands: ${commands.length}\n`;
     msg += `│ ✧ Prefix: ${global.config.PREFIX}\n`;
     msg += `╰─────────────────────⭓\n\n`;
@@ -186,7 +201,7 @@ module.exports.run = async function ({ api, event, args }) {
     msg += `╰‣ Report : .callad (yourmsg)\n`;
 
     // ==============================
-    // 🎞 RANDOM GIF
+    // 🎞 RANDOM GIF ATTACHMENT (MAIN LIST)
     // ==============================
 
     let attachment = null;
