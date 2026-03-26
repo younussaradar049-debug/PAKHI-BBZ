@@ -99,7 +99,7 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
   // 📤 Send message
   api.sendMessage(
     {
-      body: "📊 Bot Uptime & Stats",
+      body: "📊 Pakhi bbz Uptime & Stats",
       attachment: fs.createReadStream(outPath)
     },
     threadID,
