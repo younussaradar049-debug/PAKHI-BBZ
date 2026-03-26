@@ -56,7 +56,7 @@ module.exports.config = {
   credits: "rX",
   usePrefix: true,
   description: "Bot status image",
-  commandCategory: "system",
+  commandCategory: "System",
   usages: "",
   cooldowns: 5,
 };
