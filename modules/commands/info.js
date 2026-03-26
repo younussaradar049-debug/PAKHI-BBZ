@@ -1,82 +1,107 @@
-const fs = require("fs");
-const path = require("path");
-const moment = require("moment-timezone");
-
 module.exports.config = {
-	name: "info",
-	version: "1.0.3",
-	hasPermssion: 0,
-	credits: "rX Abdullah",
-	description: "Admin.",
-	commandCategory: "Admin",
-	cooldowns: 1
+ name: "info",
+ version: "1.0.0",
+ hasPermssion: 0,
+ credits: "HRIDOY",
+ description: "Bot information command",
+ commandCategory: "Admin",
+ hide: true,
+ usages: "",
+ cooldowns: 5,
 };
 
-module.exports.run = async function({ api, event }) {
-	const time = process.uptime(),
-		hours = Math.floor(time / (60 * 60)),
-		minutes = Math.floor((time % (60 * 60)) / 60),
-		seconds = Math.floor(time % 60);
+module.exports.run = async function ({ api, event, args, Users, Threads }) {
+ const { threadID } = event;
+ const request = global.nodemodule["request"];
+ const fs = global.nodemodule["fs-extra"];
+ const moment = require("moment-timezone");
 
-	const currentTime = moment.tz("Asia/Dhaka").format("『D/MM/YYYY』 【HH:mm:ss】");
+ const { configPath } = global.client;
+ delete require.cache[require.resolve(configPath)];
+ const config = require(configPath);
 
-	const message = 
-`╔═══━━━─── • ───━━━═══╗
-   👑 𝗢𝗪𝗡𝗘𝗥 𝗣𝗥𝗢𝗙𝗜𝗟𝗘 👑
-╚═══━━━─── • ───━━━═══╝
+ const { commands } = global.client;
+ const threadSetting = (await Threads.getData(String(threadID))).data || {};
+ const prefix = threadSetting.hasOwnProperty("PREFIX") ? threadSetting.PREFIX : config.PREFIX;
 
-╭─❖ 𝗕𝗔𝗦𝗜𝗖 𝗜𝗡𝗙𝗢
-│ ✦ 𝗡𝗮𝗺𝗲     : 𝗠𝗶𝘀𝘁𝘆 𝗕𝗯𝘇
-│ ✦ 𝗔𝗴𝗲      : 𝟭𝟴
-│ ✦ 𝗥𝗼𝗹𝗲     : 𝗔𝗱𝗺𝗶𝗻
-╰───────────────❖
+ // 🔥 Loading Animation Start
+ const progress = [
+        "[■□□□□□□□□□] 10%",
+        "[■■■□□□□□□□] 30%",
+        "[■■■■■□□□□□] 50%",
+        "[■■■■■■■□□□] 70%",
+        "[■■■■■■■■■□] 90%",
+        "[■■■■■■■■■■] 100%"
+    ];
 
-╭─❖ 𝗖𝗢𝗡𝗧𝗔𝗖𝗧
-│ 💬 𝗙𝗮𝗰𝗲𝗯𝗼𝗼𝗸 : 
-│ https://m.me/61564643127325
-╰───────────────❖
+ let loading = await api.sendMessage(
+      `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[0]}`,
+      threadID
+ );
 
-╭─❖ 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦
-│ ⏰ 𝗧𝗶𝗺𝗲     : ${currentTime}
-│ ⚡ 𝗨𝗽𝘁𝗶𝗺𝗲  : ${hours}h ${minutes}m ${seconds}s
-╰───────────────❖
+ for (let i = 1; i < progress.length; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      // ❗ edit message in place
+      if (api.editMessage) {
+        await api.editMessage(
+          `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
+          loading.messageID
+        );
+      } else {
+        // fallback if editMessage not available
+        await api.unsendMessage(loading.messageID);
+        loading = await api.sendMessage(
+          `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
+          threadID
+        );
+      }
+ }
 
-╔═══━━━─── • ───━━━═══╗
-  𝗧𝗵𝗮𝗻𝗸𝘀 𝗳𝗼𝗿 𝘂𝘀𝗶𝗻𝗴 𝗺𝘆 𝗯𝗼𝘁 
-╚═══━━━─── • ───━━━═══╝
-;
+ await new Promise(r => setTimeout(r, 500));
+ try { await api.unsendMessage(loading.messageID); } catch(e) {}
 
-	// লোকাল cache gif
-	const cacheDir = path.join(__dirname, "cache");
-	const cacheFile = path.join(cacheDir, "info.gif");
+ // 🔥 Prepare info
+ const uptime = process.uptime();
+ const hours = Math.floor(uptime / 3600);
+ const minutes = Math.floor((uptime % 3600) / 60);
+ const seconds = Math.floor(uptime % 60);
 
-	try {
-		// cache ফোল্ডার চেক
-		if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+ const timeNow = moment.tz("Asia/Dhaka").format("DD/MM/YYYY HH:mm:ss");
+ const h = hours, m = minutes, s = seconds;
 
-		// gif ফাইল নাই হলে error দিবে
-		if (!fs.existsSync(cacheFile)) {
-			return api.sendMessage("❌ info.gif ফাইল cache ফোল্ডারে পাওয়া যায়নি!", event.threadID);
-		}
+ const totalUsers = global.data.allUserID.length;
+ const totalThreads = global.data.allThreadID.length;
 
-		// send gif + 10 sec unsend
-		await api.sendMessage(
-			{
-				body: message,
-				attachment: fs.createReadStream(cacheFile)
-			},
-			event.threadID,
-			(err, info) => {
-				if (!err) {
-					setTimeout(() => {
-						api.unsendMessage(info.messageID);
-					}, 10000); // 10 sec পরে auto unsend
-				}
-			}
-		);
+ const msg = `
+╔════ INFO ════╗
 
-	} catch (error) {
-		console.error(error);
-		api.sendMessage("❌ GIF পাঠানো ব্যর্থ হয়েছে।", event.threadID);
-	}
+Name: Misty Bbz
+Age: 18
+Role: Admin
+
+Facebook:
+https://m.me/61564643127325
+
+Time: ${timeNow}
+Uptime: ${h}h ${m}m ${s}s
+
+╚══════════════╝
+`;
+
+ const imgLinks = [
+ "https://i.imgur.com/5HD6Alr.jpeg"
+ ];
+
+ const imgLink = imgLinks[Math.floor(Math.random() * imgLinks.length)];
+
+ const callback = () => {
+ api.sendMessage({
+   body: msg,
+   attachment: fs.createReadStream(__dirname + "/cache/info.jpg")
+ }, threadID, () => fs.unlinkSync(__dirname + "/cache/info.jpg"));
+ };
+
+ return request(encodeURI(imgLink))
+   .pipe(fs.createWriteStream(__dirname + "/cache/info.jpg"))
+   .on("close", callback);
 };

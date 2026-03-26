@@ -7,7 +7,7 @@ module.exports.config = {
     name: "owner",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "rX Abdullah", //don't change my credit 
+    credits: "rX Abdullah",
     description: "Show Owner Info",
     commandCategory: "Admin",
     usages: "",
@@ -15,6 +15,37 @@ module.exports.config = {
 };
 
 module.exports.run = async function({ api, event }) {
+
+    const loadingFrames = [
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■□□□□□□□□□] 10%",
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■■■□□□□□□□] 30%",
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■■■■■□□□□□] 50%",
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■■■■■■■□□□] 70%",
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■■■■■■■■■□] 90%",
+        "𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝙄𝙣𝙛𝙤...\n[■■■■■■■■■■] 100%"
+    ];
+
+    // 🔥 first message
+    let msg = await api.sendMessage(loadingFrames[0], event.threadID);
+
+    for (let i = 1; i < loadingFrames.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // same message replace feel
+        await api.editMessage 
+        ? api.editMessage(loadingFrames[i], msg.messageID)
+        : async function () {
+            await api.unsendMessage(msg.messageID);
+            msg = await api.sendMessage(loadingFrames[i], event.threadID);
+        }();
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // 🔥 remove loading msg
+    await api.unsendMessage(msg.messageID);
+
+    // ================= ORIGINAL CODE =================
     var time = moment().tz("Asia/Dhaka").format("DD/MM/YYYY hh:mm:ss A");
 
     var callback = () => api.sendMessage({
@@ -40,7 +71,7 @@ module.exports.run = async function({ api, event }) {
         attachment: fs.createReadStream(__dirname + "/cache/1.png")
     }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"));
   
-    return request(encodeURI(`https://graph.facebook.com/100068565380737/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`))
+    return request(encodeURI(`https://i.ibb.co/hvYXKkx/image0.jpg`))
         .pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
         .on('close', () => callback());
 };
