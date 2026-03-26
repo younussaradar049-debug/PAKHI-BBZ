@@ -34,24 +34,40 @@ module.exports.run = async function ({ api, event, args, Users, Threads }) {
         "[■■■■■■■■■■] 100%"
     ];
 
-    let loading = await api.sendMessage(
+ let loading = await api.sendMessage(
       `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[0]}`,
       threadID
-    );
+ );
 
-    for (let i = 1; i < progress.length; i++) {
-      await new Promise(r => setTimeout(r, 250));
-      await api.editMessage(
-        `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
-        loading.messageID
-      );
-    }
- 
+ for (let i = 1; i < progress.length; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      // ❗ edit message in place
+      if (api.editMessage) {
+        await api.editMessage(
+          `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
+          loading.messageID
+        );
+      } else {
+        // fallback if editMessage not available
+        await api.unsendMessage(loading.messageID);
+        loading = await api.sendMessage(
+          `𝙇𝙤𝙖𝙙𝙞𝙣𝙜 𝗜𝗻𝗳𝗼...\n\n${progress[i]}`,
+          threadID
+        );
+      }
+ }
 
+ await new Promise(r => setTimeout(r, 500));
+ try { await api.unsendMessage(loading.messageID); } catch(e) {}
+
+ // 🔥 Prepare info
  const uptime = process.uptime();
  const hours = Math.floor(uptime / 3600);
  const minutes = Math.floor((uptime % 3600) / 60);
  const seconds = Math.floor(uptime % 60);
+
+ const timeNow = moment.tz("Asia/Dhaka").format("DD/MM/YYYY HH:mm:ss");
+ const h = hours, m = minutes, s = seconds;
 
  const totalUsers = global.data.allUserID.length;
  const totalThreads = global.data.allThreadID.length;
@@ -80,12 +96,12 @@ Uptime: ${h}h ${m}m ${s}s
 
  const callback = () => {
  api.sendMessage({
- body: msg,
- attachment: fs.createReadStream(__dirname + "/cache/info.jpg")
+   body: msg,
+   attachment: fs.createReadStream(__dirname + "/cache/info.jpg")
  }, threadID, () => fs.unlinkSync(__dirname + "/cache/info.jpg"));
  };
 
  return request(encodeURI(imgLink))
- .pipe(fs.createWriteStream(__dirname + "/cache/info.jpg"))
- .on("close", callback);
+   .pipe(fs.createWriteStream(__dirname + "/cache/info.jpg"))
+   .on("close", callback);
 };
