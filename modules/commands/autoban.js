@@ -17,7 +17,7 @@ module.exports.handleEvent = async ({
 	let c = await n.getNameUser(o.senderID);
     //Sửa câu trả lời của Bạn
 	var h = {
-		body: `»Notice from  rX ABDULLAH«\n\n${c}, You are stupid for cursing bots so bots automatically banned you from the system`
+		body: `»Notice from  Kakashi «\n\n${c}, You are stupid for cursing bots so bots automatically banned you from the system`
 	};
     //Add curse words without capital letters
 	["bot mc", "Mc bot", "tui to magi", "guya", "Bot teri maa ki chut", "hol amar", "ভোদার বট", "stupid bots", "চাপড়ি বট", "Bot lund", "abdullah mc", "pakhi magi", "maria kharap", "fuck bots", "hol pagol", "tore xhudi", "useless bot", "বট চুদি", "fuck you", "bc bot", "Nikal bsdk bot", "shawya", "হেড়ার বট", "bot paylac rồi", "hol amr", "amar hol", "clap bot", "tuk cudi", "shawyar bot", "bot óc", "bot óc chó", "magi", "bot tiki", "hol er bot", "lol bot", "chat er khotha", "lồn bot", "boder bot", "chat pagol", "bot cac", "maria abar k", "bot xhudi", "bot sudi", "🖕🖕🖕", "amr hol de", "bot fake", "Bot code", "khanki magi", "bad bots", "bot cau"].forEach((a => {
